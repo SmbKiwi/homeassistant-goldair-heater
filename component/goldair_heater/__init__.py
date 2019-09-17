@@ -5,6 +5,17 @@ Platform for Goldair WiFi-connected heaters and panels.
 Based on sean6541/tuya-homeassistant for service call logic, and TarxBoy's
 investigation into Goldair's tuyapi statuses
 https://github.com/codetheweb/tuyapi/issues/31.
+
+Version 1.0 Author: SmbKiwi
+March 2019
+Updated for small changes to HA:
+  - hass_config becoming a required argument to load_platform() possibly in Home Assistant 0.80+
+  - provide instructions to use a different method to obtain device key
+  - create new required file for custom components __init__.py 
+  - import climate ATTR_OPERATION_MODE as const 
+  - move all files to single folder named as the component (new requirement for custom components)
+Based on https://github.com/nikrolls/homeassistant-goldair-climate/tree/0.0.1
+
 """
 from time import time
 from threading import Timer, Lock
