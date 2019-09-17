@@ -5,13 +5,13 @@ from homeassistant.components.climate import (
     ClimateDevice)
 
 from homeassistant.components.climate.const import (
-    ATTR_OPERATION_MODE,
-    SUPPORT_ON_OFF, SUPPORT_TARGET_TEMPERATURE, SUPPORT_OPERATION_MODE, SUPPORT_SWING_MODE
+    ATTR_PRESET_MODE, HVAC_MODE_OFF, HVAC_MODE_HEAT, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF, CURRENT_HVAC_DRY,
+    SUPPORT_TARGET_TEMPERATURE, SUPPORT_PRESET_MODE, SUPPORT_SWING_MODE
 )
 from homeassistant.const import (STATE_UNAVAILABLE, ATTR_TEMPERATURE)
 import custom_components.goldair_heater as goldair_heater
 
-SUPPORT_FLAGS = SUPPORT_ON_OFF | SUPPORT_TARGET_TEMPERATURE | SUPPORT_OPERATION_MODE | SUPPORT_SWING_MODE
+SUPPORT_FLAGS = SUPPORT_TARGET_TEMPERATURE | SUPPORT_PRESET_MODE | SUPPORT_SWING_MODE
 
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
@@ -57,18 +57,23 @@ class GoldairHeater(ClimateDevice):
         else:
             return super().state
 
-    @property
-    def is_on(self):
-        """Return true if the device is on."""
-        return self._device.is_on
+    @property     
+    def hvac_mode(self):
+        """Return current hvac mode (heating or off)."""
+        return self._device.hvac_mode()
 
-    def turn_on(self):
-        """Turn on."""
-        self._device.turn_on()
-
-    def turn_off(self):
+    def set_hvac_mode(self, hvac_mode):
         """Turn off."""
-        self._device.turn_off()
+        if hvac_mode == HVAC_MODE_OFF:
+            self._device.turn_off()
+        """Turn on."""
+        if hvac_mode == HVAC_MODE_HEAT:
+            self._device.turn_on()
+    
+    @property
+    def hvac_action(self):    
+     """Return the current running hvac operation."""
+        return self._device.hvac_action()
 
     @property
     def temperature_unit(self):
@@ -99,8 +104,8 @@ class GoldairHeater(ClimateDevice):
         """Set new target temperatures."""
         if kwargs.get(ATTR_TEMPERATURE) is not None:
             self._device.set_target_temperature(kwargs.get(ATTR_TEMPERATURE))
-        if kwargs.get(ATTR_OPERATION_MODE) is not None:
-            self._device.set_operation_mode(kwargs.get(ATTR_OPERATION_MODE))
+        if kwargs.get(ATTR_PRESET_MODE) is not None:
+            self._device.set_preset_mode(kwargs.get(ATTR_PRESET_MODE))
 
     @property
     def current_temperature(self):
@@ -108,27 +113,27 @@ class GoldairHeater(ClimateDevice):
         return self._device.current_temperature
 
     @property
-    def current_operation(self):
-        """Return current operation, ie Comfort, Eco, Anti-freeze."""
-        return self._device.operation_mode
+    def preset_mode(self):
+        """Return current device operation, ie Comfort, Eco, Anti-freeze."""
+        return self._device.preset_mode
 
     @property
-    def operation_list(self):
-        """Return the list of available operation modes."""
-        return self._device.operation_mode_list
+    def preset_modes(self):
+        """Return the list of available device operation modes."""
+        return self._device.preset_modes
 
-    def set_operation_mode(self, operation_mode):
-        """Set new operation mode."""
-        self._device.set_operation_mode(operation_mode)
+    def set_preset_mode(self, preset_mode):
+        """Set new device operation mode."""
+        self._device.set_preset_mode(preset_mode)
 
     @property
-    def current_swing_mode(self):
-        """Return the fan setting."""
+    def swing_mode(self):
+        """Return the power level setting."""
         return self._device.power_level
 
     @property
-    def swing_list(self):
-        """List of available swing modes."""
+    def swing_modes(self):
+        """List of available power level modes."""
         return self._device.power_level_list
 
     def set_swing_mode(self, swing_mode):
