@@ -172,13 +172,21 @@ class GoldairHeaterDevice(object):
      
     def hvac_modes(self):   
         return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
-
+"""
     def set_hvac_mode(self, hvac_mode):
         if hvac_mode == HVAC_MODE_HEAT:
              self._set_properties({ATTR_ON: True})  
         elif hvac_mode == HVAC_MODE_OFF:
              self._set_properties({ATTR_ON: False})    
-  
+  """
+
+    @property
+    def turn_on(self):
+        self._set_properties({ATTR_ON: True})
+
+    def turn_off(self):
+        self._set_properties({ATTR_ON: False})
+    
     @property
     def hvac_action(self):
         """Return the current running hvac operation."""
