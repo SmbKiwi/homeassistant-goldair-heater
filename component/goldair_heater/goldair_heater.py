@@ -13,7 +13,7 @@ import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
 from homeassistant.const import (CONF_NAME, CONF_HOST, ATTR_TEMPERATURE, TEMP_CELSIUS)
 from homeassistant.components.climate import (ClimateDevice)
-from homeassistant.components.climate import (ATTR_PRESET_MODE, HVAC_MODE_OFF, HVAC_MODE_HEAT, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF, CURRENT_HVAC_DRY)
+from homeassistant.components.climate.const import (ATTR_PRESET_MODE, HVAC_MODE_OFF, HVAC_MODE_HEAT, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF, CURRENT_HVAC_DRY)
 from homeassistant.helpers.discovery import load_platform
 
 REQUIREMENTS = ['pytuya==7.0']
