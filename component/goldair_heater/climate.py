@@ -73,7 +73,7 @@ class GoldairHeater(ClimateDevice):
     @property
     def hvac_action(self):    
      """Return the current running hvac operation."""
-        return self._device.hvac_action()
+        return self._device.hvac_action
 
     @property
     def temperature_unit(self):
