@@ -52,7 +52,7 @@ class GoldairHeater(ClimateDevice):
     @property
     def state(self):
         """Return the state of the climate device."""
-        if self._device.is_on is None:
+        if self._device.hvac_mode is None:
             return STATE_UNAVAILABLE
         else:
             return super().state
@@ -60,7 +60,7 @@ class GoldairHeater(ClimateDevice):
     @property     
     def hvac_mode(self):
         """Return current hvac mode (heating or off)."""
-        return self._device.hvac_mode()
+        return self._device.hvac_mode
 
     def set_hvac_mode(self, hvac_mode):
         """Turn off."""
