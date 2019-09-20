@@ -22,7 +22,7 @@ import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.const import (CONF_NAME, CONF_HOST, ATTR_TEMPERATURE, TEMP_CELSIUS)
-from homeassistant.components.climate import (ClimateDevice)
+from homeassistant.components.climate import ClimateDevice
 from homeassistant.components.climate.const import (ATTR_PRESET_MODE, HVAC_MODE_OFF, HVAC_MODE_HEAT, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF, CURRENT_HVAC_DRY)
 from homeassistant.helpers.discovery import load_platform
 
@@ -33,6 +33,7 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN = 'goldair_heater'
 DATA_GOLDAIR_HEATER = 'data_goldair_heater'
 
+operation_list = [HVAC_MODE_OFF, HVAC_MODE_HEAT]
 
 CONF_DEVICE_ID = 'device_id'
 CONF_LOCAL_KEY = 'local_key'
@@ -172,14 +173,14 @@ class GoldairHeaterDevice(object):
         return self._name
 
     @property
-    def hvac_mode(self) -> str:
+    def hvac_mode(self):
         if self._get_cached_state()[ATTR_ON] == True:
             return HVAC_MODE_HEAT
         elif self._get_cached_state()[ATTR_ON] == False:
             return HVAC_MODE_OFF 
      
-    def hvac_modes(self) -> list[str]:   
-        return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
+    def hvac_modes(self):   
+        return operation_list
 
     def set_hvac_mode(self, hvac_mode):
         if hvac_mode == HVAC_MODE_HEAT:
