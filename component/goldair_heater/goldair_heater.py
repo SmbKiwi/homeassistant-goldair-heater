@@ -168,13 +168,13 @@ class GoldairHeaterDevice(object):
         return self._name
 
     @property
-    def hvac_mode(self):
+    def hvac_mode(self) -> str:
         if self._get_cached_state()[ATTR_ON] == True:
             return HVAC_MODE_HEAT
         elif self._get_cached_state()[ATTR_ON] == False:
             return HVAC_MODE_OFF 
      
-    def hvac_modes(self):   
+    def hvac_modes(self) -> List[str]:   
         return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
 
 """
@@ -193,7 +193,7 @@ class GoldairHeaterDevice(object):
         self._set_properties({ATTR_ON: False})  
   
     @property
-    def hvac_action(self):
+    def hvac_action(self) -> str:
         """Return the current running hvac operation."""
         if self._get_cached_state()[ATTR_ON] == False:  
              return CURRENT_HVAC_OFF    
