@@ -63,12 +63,7 @@ class GoldairHeater(ClimateDevice):
         return self._device.hvac_mode
 
     def set_hvac_mode(self, hvac_mode):
-        """Turn off."""
-        if hvac_mode == HVAC_MODE_OFF:
-            self._device.turn_off()
-        """Turn on."""
-        if hvac_mode == HVAC_MODE_HEAT:
-            self._device.turn_on()
+        return self._device.set_hvac_mode(hvac_mode)
     
     @property
     def hvac_action(self):    
