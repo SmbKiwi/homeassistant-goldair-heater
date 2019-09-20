@@ -5,7 +5,7 @@ investigation into Goldair's tuyapi statuses
 https://github.com/codetheweb/tuyapi/issues/31.
 
 Version 2.0 Author: SmbKiwi
-17 September 2019
+20 September 2019
 Updated for HA Climate 1.0 (HA 0.96+)
 Based on https://github.com/nikrolls/homeassistant-goldair-climate/tree/0.0.1
 
