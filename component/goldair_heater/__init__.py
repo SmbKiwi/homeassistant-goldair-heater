@@ -13,7 +13,7 @@ Based on https://github.com/nikrolls/homeassistant-goldair-climate/tree/0.0.1
 
 """
 
-"""
+
 from time import time
 from threading import Timer, Lock
 import logging
