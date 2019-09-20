@@ -177,14 +177,12 @@ class GoldairHeaterDevice(object):
     def hvac_modes(self) -> List[str]:   
         return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
 
-"""
     def set_hvac_mode(self, hvac_mode):
         if hvac_mode == HVAC_MODE_HEAT:
              self._set_properties({ATTR_ON: True})  
         elif hvac_mode == HVAC_MODE_OFF:
              self._set_properties({ATTR_ON: False})    
-  """
-
+  
     @property
     def turn_on(self):
         self._set_properties({ATTR_ON: True})
