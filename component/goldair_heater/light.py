@@ -35,10 +35,12 @@ class GoldairLedDisplayLight(Light):
     @property
     def is_on(self):
         """Return the current state."""
-        if self._device.is_on is None:
+        if self._device.hvac_mode is None:
             return STATE_UNAVAILABLE
+        if self._device.hvac_mode is HVAC_MODE_OFF:
+            return False
         else:
-            return self._device.is_on and self._device.is_display_on
+            return True and self._device.is_display_on
 
     def turn_on(self):
         """Turn on the LED display."""
