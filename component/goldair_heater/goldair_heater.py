@@ -29,7 +29,6 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN = 'goldair_heater'
 DATA_GOLDAIR_HEATER = 'data_goldair_heater'
 
-self._operation_list = [HVAC_MODE_OFF, HVAC_MODE_HEAT]
 
 CONF_DEVICE_ID = 'device_id'
 CONF_LOCAL_KEY = 'local_key'
@@ -164,6 +163,8 @@ class GoldairHeaterDevice(object):
         self._CONNECTION_ATTEMPTS = 2
         self._lock = Lock()
 
+    self._operation_list = [HVAC_MODE_OFF, HVAC_MODE_HEAT]
+        
     @property
     def name(self):
         return self._name
