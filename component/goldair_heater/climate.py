@@ -76,7 +76,7 @@ class GoldairHeater(ClimateDevice):
     @property
     def hvac_action(self):
         """Return the current running hvac operation."""
-        if self._get_cached_state()[ATTR_ON] == False:  
+        if self._device.hvac_mode == HVAC_MODE_OFF:  
              return CURRENT_HVAC_OFF    
         if self.preset_mode == STATE_ANTI_FREEZE:
             return CURRENT_HVAC_DRY
