@@ -80,8 +80,9 @@ class GoldairHeater(ClimateDevice):
              return CURRENT_HVAC_OFF    
         if self._device.preset_mode == STATE_ANTI_FREEZE:
             return CURRENT_HVAC_DRY
-        if self._device.target_temperature < self._device.current_temperature:
-            return CURRENT_HVAC_IDLE
+        if self._device.target_temperature is not None:
+            if self._device.target_temperature < self._device.current_temperature:
+               return CURRENT_HVAC_IDLE
         return CURRENT_HVAC_HEAT
 
     @property
