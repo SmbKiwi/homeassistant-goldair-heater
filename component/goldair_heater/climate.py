@@ -1,8 +1,7 @@
 """
 Platform to control Goldair WiFi-connected heaters and panels.
 """
-from homeassistant.components.climate import (
-    ClimateDevice)
+from homeassistant.components.climate import ClimateDevice
 
 from homeassistant.components.climate.const import (
     ATTR_PRESET_MODE, HVAC_MODE_OFF, HVAC_MODE_HEAT, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF, CURRENT_HVAC_DRY,
@@ -56,7 +55,7 @@ class GoldairHeater(ClimateDevice):
         """Return the state of the climate device."""
         if self._device._get_cached_state()[ATTR_ON] is None:
             return STATE_UNAVAILABLE
-        if self._device._get_cached_state()[ATTR_ON] == True:
+        if self._device._get_cached_state()[ATTR_ON] is True:
             return HVAC_MODE_HEAT
         return HVAC_MODE_OFF    
 
@@ -82,7 +81,7 @@ class GoldairHeater(ClimateDevice):
             return CURRENT_HVAC_DRY
         if self._device.target_temperature is not None:
             if self._device.target_temperature < self._device.current_temperature:
-               return CURRENT_HVAC_IDLE
+                return CURRENT_HVAC_IDLE
         return CURRENT_HVAC_OFF
 
     @property
