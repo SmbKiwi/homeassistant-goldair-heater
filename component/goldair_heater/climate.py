@@ -76,14 +76,14 @@ class GoldairHeater(ClimateDevice):
     @property
     def hvac_action(self):
         """Return the current running hvac operation."""
-        if self._device.hvac_mode == HVAC_MODE_OFF:  
-             return CURRENT_HVAC_OFF    
+        if self._device.hvac_mode == HVAC_MODE_HEAT:  
+             return CURRENT_HVAC_HEAT    
         if self._device.preset_mode == STATE_ANTI_FREEZE:
             return CURRENT_HVAC_DRY
         if self._device.target_temperature is not None:
             if self._device.target_temperature < self._device.current_temperature:
                return CURRENT_HVAC_IDLE
-        return CURRENT_HVAC_HEAT
+        return CURRENT_HVAC_OFF
 
     @property
     def temperature_unit(self):
