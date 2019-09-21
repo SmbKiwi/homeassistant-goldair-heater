@@ -174,9 +174,9 @@ class GoldairHeaterDevice(object):
 
     @property
     def hvac_mode(self):
-        if self._get_cached_state()[ATTR_ON] == True:
+        if self._get_cached_state()[ATTR_ON] is True:
             return HVAC_MODE_HEAT
-        elif self._get_cached_state()[ATTR_ON] == False:
+        elif self._get_cached_state()[ATTR_ON] is False:
             return HVAC_MODE_OFF 
      
     def hvac_modes(self):   
