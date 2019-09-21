@@ -196,7 +196,7 @@ class GoldairHeaterDevice(object):
         self._set_properties({ATTR_ON: False})  
   
     @property
-    def hvac_action(self) -> str:
+    def hvac_action(self):
         """Return the current running hvac operation."""
         if self._get_cached_state()[ATTR_ON] == False:  
              return CURRENT_HVAC_OFF    
