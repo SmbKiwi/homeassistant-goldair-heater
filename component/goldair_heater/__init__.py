@@ -165,8 +165,8 @@ class GoldairHeaterDevice(object):
         self._CACHE_TIMEOUT = 20
         self._CONNECTION_ATTEMPTS = 2
         self._lock = Lock()
-
-    self._operation_list = [HVAC_MODE_OFF, HVAC_MODE_HEAT]
+        self._operation_list = [HVAC_MODE_OFF, HVAC_MODE_HEAT]
+    
     
     @property
     def name(self):
