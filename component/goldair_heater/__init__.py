@@ -33,7 +33,7 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN = 'goldair_heater'
 DATA_GOLDAIR_HEATER = 'data_goldair_heater'
 
-operation_list = [HVAC_MODE_OFF, HVAC_MODE_HEAT]
+self._operation_list = [HVAC_MODE_OFF, HVAC_MODE_HEAT]
 
 CONF_DEVICE_ID = 'device_id'
 CONF_LOCAL_KEY = 'local_key'
@@ -180,7 +180,7 @@ class GoldairHeaterDevice(object):
             return HVAC_MODE_OFF 
      
     def hvac_modes(self):   
-        return operation_list
+        return self._operation_list
 
     def set_hvac_mode(self, hvac_mode):
         if hvac_mode == HVAC_MODE_HEAT:
