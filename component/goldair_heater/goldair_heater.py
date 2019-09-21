@@ -191,18 +191,7 @@ class GoldairHeaterDevice(object):
 
     def turn_off(self):
         self._set_properties({ATTR_ON: False})  
-  
-    @property
-    def hvac_action(self):
-        """Return the current running hvac operation."""
-        if self._get_cached_state()[ATTR_ON] == False:  
-             return CURRENT_HVAC_OFF    
-        if self.preset_mode == STATE_ANTI_FREEZE:
-            return CURRENT_HVAC_DRY
-        if self._target_temperature < self._current_temperature:
-            return CURRENT_HVAC_IDLE
-        return CURRENT_HVAC_HEAT
-
+      
     @property
     def temperature_unit(self):
         return self._TEMPERATURE_UNIT
