@@ -14,6 +14,7 @@ import custom_components.goldair_heater as goldair_heater
 SUPPORT_FLAGS = SUPPORT_TARGET_TEMPERATURE | SUPPORT_PRESET_MODE | SUPPORT_SWING_MODE
 
 ATTR_ON = 'on'
+STATE_ANTI_FREEZE = 'Anti-freeze'
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the Goldair WiFi heater."""
@@ -73,9 +74,15 @@ class GoldairHeater(ClimateDevice):
         return self._device.set_hvac_mode(hvac_mode)
     
     @property
-    def hvac_action(self):    
-     """Return the current running hvac operation."""
-        return self._device.hvac_action
+    def hvac_action(self):
+        """Return the current running hvac operation."""
+        if self._get_cached_state()[ATTR_ON] == False:  
+             return CURRENT_HVAC_OFF    
+        if self.preset_mode == STATE_ANTI_FREEZE:
+            return CURRENT_HVAC_DRY
+        if self._target_temperature < self._current_temperature:
+            return CURRENT_HVAC_IDLE
+        return CURRENT_HVAC_HEAT
 
     @property
     def temperature_unit(self):
