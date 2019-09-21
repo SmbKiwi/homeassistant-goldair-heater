@@ -13,6 +13,7 @@ import custom_components.goldair_heater as goldair_heater
 
 SUPPORT_FLAGS = SUPPORT_TARGET_TEMPERATURE | SUPPORT_PRESET_MODE | SUPPORT_SWING_MODE
 
+ATTR_ON = 'on'
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the Goldair WiFi heater."""
@@ -52,16 +53,22 @@ class GoldairHeater(ClimateDevice):
     @property
     def state(self):
         """Return the state of the climate device."""
-        if self._device.hvac_mode is None:
+        if self._device._get_cached_state()[ATTR_ON] is None:
             return STATE_UNAVAILABLE
-        else:
-            return super().state
+        if self._device._get_cached_state()[ATTR_ON] == True:
+            return HVAC_MODE_HEAT
+        return HVAC_MODE_OFF    
 
     @property     
     def hvac_mode(self):
         """Return current hvac mode (heating or off)."""
         return self._device.hvac_mode
 
+    @property  
+    def hvac_modes(self):
+        """Return hvac modes (heating or off)."""
+        return self._device.hvac_modes
+    
     def set_hvac_mode(self, hvac_mode):
         return self._device.set_hvac_mode(hvac_mode)
     
