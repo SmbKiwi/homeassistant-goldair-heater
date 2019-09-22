@@ -139,7 +139,7 @@ ACKNOWLEDGEMENTS
 ----------------
 This was my first attempt at working on some Python code, so feel free to correct any things I got wrong.
  
-All I did was modify some code to make the component it compatible with the change in Home Assistant to Climate 1.0 (HA 0.96+) architecture. None of this would have been possible without:
+All I did was modify some code from Nik Rolls to make the component compatible with the change in Home Assistant to Climate 1.0 (HA 0.96+) architecture. None of this would have been possible without:
 
 * [nikrolls](https://github.com/nikrolls/homeassistant-goldair-climate) Nik wrote the original python project - awesome work. 
 * [TarxBoy](https://github.com/TarxBoy)'s [investigation using codetheweb/tuyapi](https://github.com/codetheweb/tuyapi/issues/31) to figure out the correlation of the cryptic DPS states 
