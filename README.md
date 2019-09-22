@@ -112,7 +112,7 @@ You can use an Android phone and two apps (the Goldair app and a Package Capture
 6. In the top bar of the app there are two "Play" symbols. The one with a 1 allows you to capture packets from certain apps.
 7. Click on the '1' play symbol, scroll down the list of apps and select "Goldair" app from the list.
 8. A popup message will appear about setting up a vpn, so agree to this, and the app will then start capturing packets.
-9. Leaving the Package Capture app running on your phone, next open the Goldair app. On the openeing screen showing "All Devices" pull down the screen to cause a refresh. You can do this once or twice if you wish, but once should be enough. 
+9. Leaving the Package Capture app running on your phone, next open the Goldair app. On the opening screen showing "All Devices" pull down the screen to cause a refresh. You can do this once or twice if you wish, but once should be enough. 
 10. Go back to the Packet Capture app and hit the Stop button at the top.
 11. You should now have an entry below listing an x number of captures.Tap that entry to open it. 
 12. Next look at the list of packets and open one of the packets in the list that is marked as "SSL". If you refreshed the screen once or twice you should have only a couple of SSL related packets in the list. 
