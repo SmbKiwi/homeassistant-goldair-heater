@@ -2,6 +2,8 @@ Home Assistant Goldair WiFi Heater component
 ============================================
 **Compatible with Home Assistant 0.96 and above (Climate 1.0)**
 
+**NOTE: This version works with the older firmware and API. If you have updated the heater firmware to version 1.0.2 or later, then do not use this version.** 
+
 The `goldair_heater` component integrates 
 [Goldair WiFi-enabled heaters](http://www.goldair.co.nz/product-catalogue/heating/wifi-heaters) into Home Assistant, 
 enabling control of setting the following parameters via the UI and the following services:
