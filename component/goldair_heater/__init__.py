@@ -5,7 +5,15 @@ Platform for Goldair WiFi-connected heaters and panels.
 Based on sean6541/tuya-homeassistant for service call logic, and TarxBoy's
 investigation into Goldair's tuyapi statuses
 https://github.com/codetheweb/tuyapi/issues/31.
+
+Version 2.0 Author: SmbKiwi
+20 September 2019
+Updated for HA Climate 1.0 (HA 0.96+)
+Based on https://github.com/nikrolls/homeassistant-goldair-climate/tree/0.0.1
+
 """
+
+
 from time import time
 from threading import Timer, Lock
 import logging
@@ -14,7 +22,8 @@ import voluptuous as vol
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.const import (CONF_NAME, CONF_HOST, ATTR_TEMPERATURE, TEMP_CELSIUS)
-from homeassistant.components.climate import ATTR_OPERATION_MODE
+from homeassistant.components.climate import ClimateDevice
+from homeassistant.components.climate.const import (ATTR_PRESET_MODE, HVAC_MODE_OFF, HVAC_MODE_HEAT, CURRENT_HVAC_HEAT, CURRENT_HVAC_IDLE, CURRENT_HVAC_OFF, CURRENT_HVAC_DRY)
 from homeassistant.helpers.discovery import load_platform
 
 REQUIREMENTS = ['pytuya==7.0']
@@ -23,7 +32,6 @@ _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'goldair_heater'
 DATA_GOLDAIR_HEATER = 'data_goldair_heater'
-
 
 CONF_DEVICE_ID = 'device_id'
 CONF_LOCAL_KEY = 'local_key'
@@ -51,7 +59,7 @@ GOLDAIR_PROPERTY_TO_DPS_ID = {
     ATTR_ON: '1',
     ATTR_TARGET_TEMPERATURE: '2',
     ATTR_TEMPERATURE: '3',
-    ATTR_OPERATION_MODE: '4',
+    ATTR_PRESET_MODE: '4',
     ATTR_CHILD_LOCK: '6',
     ATTR_FAULT: '12',
     ATTR_POWER_LEVEL: '101',
@@ -123,7 +131,6 @@ class GoldairHeaterDevice(object):
     def __init__(self, name, dev_id, address, local_key):
         """
         Represents a Goldair Heater device.
-
         Args:
             dev_id (str): The device id.
             address (str): The network address.
@@ -158,21 +165,37 @@ class GoldairHeaterDevice(object):
         self._CACHE_TIMEOUT = 20
         self._CONNECTION_ATTEMPTS = 2
         self._lock = Lock()
-
+        self._operation_list = [HVAC_MODE_OFF, HVAC_MODE_HEAT]
+    
+    
     @property
     def name(self):
         return self._name
 
     @property
-    def is_on(self):
-        return self._get_cached_state()[ATTR_ON]
+    def hvac_mode(self):
+        if self._get_cached_state()[ATTR_ON] is True:
+            return HVAC_MODE_HEAT
+        elif self._get_cached_state()[ATTR_ON] is False:
+            return HVAC_MODE_OFF 
+    
+    @property
+    def hvac_modes(self):   
+        return self._operation_list
 
+    def set_hvac_mode(self, hvac_mode):
+        if hvac_mode == HVAC_MODE_HEAT:
+             self._set_properties({ATTR_ON: True})  
+        elif hvac_mode == HVAC_MODE_OFF:
+             self._set_properties({ATTR_ON: False})    
+  
+    @property
     def turn_on(self):
         self._set_properties({ATTR_ON: True})
 
     def turn_off(self):
-        self._set_properties({ATTR_ON: False})
-
+        self._set_properties({ATTR_ON: False})  
+  
     @property
     def temperature_unit(self):
         return self._TEMPERATURE_UNIT
@@ -180,9 +203,9 @@ class GoldairHeaterDevice(object):
     @property
     def target_temperature(self):
         state = self._get_cached_state()
-        if self.operation_mode == STATE_COMFORT:
+        if self.preset_mode == STATE_COMFORT:
             return state[ATTR_TARGET_TEMPERATURE]
-        elif self.operation_mode == STATE_ECO:
+        elif self.preset_mode == STATE_ECO:
             return state[ATTR_ECO_TARGET_TEMPERATURE]
         else:
             return None
@@ -193,35 +216,35 @@ class GoldairHeaterDevice(object):
 
     @property
     def min_target_teperature(self):
-        if self.operation_mode and self.operation_mode != STATE_ANTI_FREEZE:
-            return self._TEMPERATURE_LIMITS[self.operation_mode]['min']
+        if self.preset_mode and self.preset_mode != STATE_ANTI_FREEZE:
+            return self._TEMPERATURE_LIMITS[self.preset_mode]['min']
         else:
             return None
 
     @property
     def max_target_temperature(self):
-        if self.operation_mode and self.operation_mode != STATE_ANTI_FREEZE:
-            return self._TEMPERATURE_LIMITS[self.operation_mode]['max']
+        if self.preset_mode and self.preset_mode != STATE_ANTI_FREEZE:
+            return self._TEMPERATURE_LIMITS[self.preset_mode]['max']
         else:
             return None
 
     def set_target_temperature(self, target_temperature):
         target_temperature = int(round(target_temperature))
-        operation_mode = self.operation_mode
+        preset_mode = self.preset_mode
 
-        if operation_mode == STATE_ANTI_FREEZE:
+        if preset_mode == STATE_ANTI_FREEZE:
             raise ValueError('You cannot set the temperature in Anti-freeze mode.')
 
-        limits = self._TEMPERATURE_LIMITS[operation_mode]
+        limits = self._TEMPERATURE_LIMITS[preset_mode]
         if not limits['min'] <= target_temperature <= limits['max']:
             raise ValueError(
                 f'Target temperature ({target_temperature}) must be between '
                 f'{limits["min"]} and {limits["max"]}'
             )
 
-        if operation_mode == STATE_COMFORT:
+        if preset_mode == STATE_COMFORT:
             self._set_properties({ATTR_TARGET_TEMPERATURE: target_temperature})
-        elif operation_mode == STATE_ECO:
+        elif preset_mode == STATE_ECO:
             self._set_properties({ATTR_ECO_TARGET_TEMPERATURE: target_temperature})
 
     @property
@@ -229,17 +252,17 @@ class GoldairHeaterDevice(object):
         return self._get_cached_state()[ATTR_TEMPERATURE]
 
     @property
-    def operation_mode(self):
-        return self._get_cached_state()[ATTR_OPERATION_MODE]
+    def preset_mode(self):
+        return self._get_cached_state()[ATTR_PRESET_MODE]
 
     @property
-    def operation_mode_list(self):
+    def preset_modes(self):
         return list(GOLDAIR_MODE_TO_DPS_MODE.keys())
 
-    def set_operation_mode(self, new_mode):
+    def set_preset_mode(self, new_mode):
         if new_mode not in GOLDAIR_MODE_TO_DPS_MODE:
             raise ValueError(f'Invalid mode: {new_mode}')
-        self._set_properties({ATTR_OPERATION_MODE: new_mode})
+        self._set_properties({ATTR_PRESET_MODE: new_mode})
 
     @property
     def is_child_locked(self):
@@ -333,7 +356,7 @@ class GoldairHeaterDevice(object):
             ATTR_ON: None,
             ATTR_TARGET_TEMPERATURE: None,
             ATTR_TEMPERATURE: None,
-            ATTR_OPERATION_MODE: None,
+            ATTR_PRESET_MODE: None,
             ATTR_CHILD_LOCK: None,
             ATTR_FAULT: None,
             ATTR_POWER_LEVEL: None,
@@ -432,7 +455,7 @@ class GoldairHeaterDevice(object):
         for key, dps_id in GOLDAIR_PROPERTY_TO_DPS_ID.items():
             if dps_id in dps:
                 value = dps[dps_id]
-                if dps_id == GOLDAIR_PROPERTY_TO_DPS_ID[ATTR_OPERATION_MODE]:
+                if dps_id == GOLDAIR_PROPERTY_TO_DPS_ID[ATTR_PRESET_MODE]:
                     self._cached_state[key] = GoldairHeaterDevice._get_key_for_value(GOLDAIR_MODE_TO_DPS_MODE, value)
                 elif dps_id == GOLDAIR_PROPERTY_TO_DPS_ID[ATTR_POWER_LEVEL]:
                     self._cached_state[key] = GoldairHeaterDevice._get_key_for_value(GOLDAIR_POWER_LEVEL_TO_DPS_LEVEL, value)
@@ -447,7 +470,7 @@ class GoldairHeaterDevice(object):
         for key, dps_id in GOLDAIR_PROPERTY_TO_DPS_ID.items():
             if key in properties:
                 value = properties[key]
-                if dps_id == GOLDAIR_PROPERTY_TO_DPS_ID[ATTR_OPERATION_MODE]:
+                if dps_id == GOLDAIR_PROPERTY_TO_DPS_ID[ATTR_PRESET_MODE]:
                     dps[dps_id] = GOLDAIR_MODE_TO_DPS_MODE[value]
                 elif dps_id == GOLDAIR_PROPERTY_TO_DPS_ID[ATTR_POWER_LEVEL]:
                     dps[dps_id] = GOLDAIR_POWER_LEVEL_TO_DPS_LEVEL[value]

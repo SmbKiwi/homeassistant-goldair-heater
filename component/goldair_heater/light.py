@@ -3,6 +3,7 @@ Platform to control the LED display light on Goldair WiFi-connected heaters and 
 """
 from homeassistant.components.light import Light
 from homeassistant.const import STATE_UNAVAILABLE
+from homeassistant.components.climate.const import HVAC_MODE_OFF
 import custom_components.goldair_heater as goldair_heater
 
 
@@ -35,10 +36,12 @@ class GoldairLedDisplayLight(Light):
     @property
     def is_on(self):
         """Return the current state."""
-        if self._device.is_on is None:
+        if self._device.hvac_mode is STATE_UNAVAILABLE:
             return STATE_UNAVAILABLE
+        if self._device.hvac_mode is HVAC_MODE_OFF:
+            return False
         else:
-            return self._device.is_on and self._device.is_display_on
+            return True and self._device.is_display_on
 
     def turn_on(self):
         """Turn on the LED display."""

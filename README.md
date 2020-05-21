@@ -1,20 +1,23 @@
 Home Assistant Goldair WiFi Heater component
 ============================================
+**Compatible with Home Assistant 0.96 and above (Climate 1.0)**
+
+**NOTE: This version works with the older firmware and API. If you have updated the heater firmware to version 1.0.2 or later, then do not use this version.** 
 
 The `goldair_heater` component integrates 
 [Goldair WiFi-enabled heaters](http://www.goldair.co.nz/product-catalogue/heating/wifi-heaters) into Home Assistant, 
 enabling control of setting the following parameters via the UI and the following services:
 
 **Climate**
-* **power** (on/off)
-* **mode** (Comfort, Eco, Anti-freeze)
+* **power** (heat/off) - Operation in the UI, hvac_mode for automations
+* **mode** (Comfort, Eco, Anti-freeze) - Preset in the UI, preset_mode for automations
 * **target temperature** (`5`-`35` in Comfort mode, `5`-`21` in Eco mode, in °C)
-* **power level** (via the swing mode setting because no appropriate HA option exists: `Auto`, `1`-`5`, `Stop`)
+* **power level** (via the swing mode setting because no appropriate HA option exists: `Auto`, `1`-`5`, `Stop`) - Swing mode in the UI, swing_mode for automations.
 
-Current temperature is also displayed.
+Current temperature and current operation (Heating, Off, Idle, Dry) are also displayed. Idle is displayed when the heater temperature has reached or exceeds the target temperature, and Dry is displayed when the Anti-freeze mode is in operation (because no appropriate HA option exists).   
 
 **Sensor**
-* **current temperature** (in °C)
+* **Current temperature** (in °C)
 
 **Light**
 * **LED display** (on/off)
@@ -83,8 +86,8 @@ GOTCHAS
 These heaters have individual target temperatures for their Comfort and Eco modes, whereas Home Assistant only supports
 a single target temperature. Therefore, when you're in Comfort mode you will set the Comfort temperature (`5`-`35`), and
 when you're in Eco mode you will set the Eco temperature (`5`-`21`), just like you were using the heater's own control 
-panel. Bear this in mind when writing automations that change the operation mode and set a temperature at the same time: 
-you must change the operation mode *before* setting the new target temperature, otherwise you will set the current 
+panel. Bear this in mind when writing automations that change the preset mode and set a temperature at the same time: 
+you must change the preset mode *before* setting the new target temperature, otherwise you will set the current 
 thermostat rather than the new one. 
 
 When switching to Anti-freeze mode, the heater will set the current power level to `1` as if you had manually chosen it.
@@ -111,7 +114,7 @@ You can use an Android phone and two apps (the Goldair app and a Package Capture
 6. In the top bar of the app there are two "Play" symbols. The one with a 1 allows you to capture packets from certain apps.
 7. Click on the '1' play symbol, scroll down the list of apps and select "Goldair" app from the list.
 8. A popup message will appear about setting up a vpn, so agree to this, and the app will then start capturing packets.
-9. Leaving the Package Capture app running on your phone, next open the Goldair app. On the openeing screen showing "All Devices" pull down the screen to cause a refresh. You can do this once or twice if you wish, but once should be enough. 
+9. Leaving the Package Capture app running on your phone, next open the Goldair app. On the opening screen showing "All Devices" pull down the screen to cause a refresh. You can do this once or twice if you wish, but once should be enough. 
 10. Go back to the Packet Capture app and hit the Stop button at the top.
 11. You should now have an entry below listing an x number of captures.Tap that entry to open it. 
 12. Next look at the list of packets and open one of the packets in the list that is marked as "SSL". If you refreshed the screen once or twice you should have only a couple of SSL related packets in the list. 
@@ -134,17 +137,13 @@ An alternate method is at
 [codetheweb/tuyapi](https://github.com/codetheweb/tuyapi/blob/master/docs/SETUP.md) (you're looking for the `uuid` and
 `localKey` values).
 
-NEXT STEPS
-----------
-This component needs specs! Once they're written I'm considering submitting it to the HA team for inclusion in standard 
-installations. Please report any issues and feel free to raise pull requests.
-
-This was my first Python project, so feel free to correct any conventions or idioms I got wrong.
-
 ACKNOWLEDGEMENTS
 ----------------
-All I did was write some code. None of this would have been possible without:
+This was my first attempt at working on some Python code, so feel free to correct any things I got wrong.
+ 
+All I did was modify some code from Nik Rolls to make the component compatible with the change in Home Assistant to Climate 1.0 (HA 0.96+) architecture. None of this would have been possible without:
 
+* [nikrolls](https://github.com/nikrolls/homeassistant-goldair-climate) Nik wrote the original python project - awesome work. 
 * [TarxBoy](https://github.com/TarxBoy)'s [investigation using codetheweb/tuyapi](https://github.com/codetheweb/tuyapi/issues/31) to figure out the correlation of the cryptic DPS states 
 * [sean6541](https://github.com/sean6541)'s [tuya-homeassistant](https://github.com/sean6541/tuya-homeassistant) library giving an example of integrating Tuya devices with Home Assistant
 * [clach04](https://github.com/clach04)'s [python-tuya](https://github.com/clach04/python-tuya) library
